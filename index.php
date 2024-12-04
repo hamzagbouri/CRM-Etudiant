@@ -1,43 +1,11 @@
+
 <?php
-$username = 'root';
-$password = '';
-$servername = 'localhost';
-$dbname = 'gestion_etudiant';
-$message ='';
+include('db.php');
+session_start();
+  $getStudentsQuery = "SELECT * FROM etudiant";
+  $result = $con -> query($getStudentsQuery);
 
-try {
-    $con = new mysqli($servername, $username, $password, $dbname);
-    if ($con->connect_error) {
-        die("Connection failed: " . $con->connect_error);
-    }
-    $getStudentsQuery = "SELECT * FROM etudiant";
-    $result = $con -> query($getStudentsQuery);
-    
-    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
-        $name = $con->real_escape_string($_POST['name-input']);
-        $dateNaissance = $_POST['date-input'];
-        $ville = $con->real_escape_string($_POST['ville-input']);
-        $phone = $con->real_escape_string($_POST['phone-input']);
-        $apprenant = $con->real_escape_string($_POST['apprenant-input']);
-
-        $statment = $con->prepare("INSERT INTO `etudiant`(`nom`, `date_naissance`, `ville`, `telephone`, `apprenant`) VALUES (?, ?, ?, ?, ?)");
-        $statment->bind_param("sssss", $name, $dateNaissance, $ville, $phone, $apprenant);
-
-        if ($statment->execute()) {
-            $message ='Student Added Seccusfully';
-        } else {
-            $message =  "Error: " . $statment->error;
-        }
-
-        $statment->close();
-        header('Location: index.php');
-
-    }
-} catch (Exception $e) {
-    echo "Error: " . $e->getMessage();
-}
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -127,7 +95,13 @@ try {
             </nav>
         </header>
         <section class="p-4 w-full flex flex-col gap-8">
-            <?php $message ?>
+        <?php
+            if (isset($_SESSION['error'])) {
+                set_time_limit(2);  
+                echo $_SESSION['error'];  
+                unset($_SESSION['error']);  
+            }
+            ?>
             
             <div class="flex justify-between items-center px-8">
                 <h1>
@@ -180,7 +154,7 @@ try {
                         <td>&nbsp;" . $row['ville'] . "</td>
                         <td>&nbsp;" . $row['telephone'] . "</td>
                         <td>&nbsp;" . $row['apprenant'] . "</td>
-                        <td>&nbsp;</td>
+                        <td>&nbsp; <a href ='delete.php?id=" . $row['id'] . "'>delete</a> <a  > edit</a> </td>
 
 
 
@@ -203,7 +177,7 @@ try {
                  
                     <div class="flex flex-col p-4">
                     <h3 class=" flex justify-center items-center" id="modal-title"></h3>
-                    <form id="student-form"  method="post" class="flex flex-col pt-16 gap-4">
+                    <form id="student-form"  method="post" action="add.php" class="flex flex-col pt-16 gap-4">
                       
                       <select value="" class="border border-2 border-gray-200 rounded-lg p-2" id = "apprenant-list" name="apprenant-input" >  
                         <option id="apprenant" disabled checked > ------ </option>  
