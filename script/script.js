@@ -14,6 +14,9 @@ document.getElementById('btn-drop-side').addEventListener("click", function(){
     }
 
 })
+function openEditModal(id,nom,date_naissance,ville,telehpone,apprenant){
+    document.getElementById('modalEdit').style.display='flex'
+}
 document.getElementById("add-etd").addEventListener('click', function(){
     console.log('aa')
     document.getElementById("modal").style.display = "flex"

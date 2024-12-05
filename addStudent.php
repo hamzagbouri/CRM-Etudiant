@@ -22,5 +22,5 @@ if ($statment->execute()) {
 }
 
 $statment->close();
-header('Location: index.php');}
+header('Location: apprenant.php');}
 ?>
